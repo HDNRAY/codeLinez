@@ -1,3 +1,29 @@
-.game-wrapper{
+.game-wrapper {
     display: flex;
+    justify-content: center;
+    align-items: center;
+
+    $boardBorder: 1px solid black;
+
+    .board {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-left: $boardBorder;
+        border-top: $boardBorder;
+        height: 90vmin;
+        width: 90vmin;
+
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .cell {
+                border-bottom: $boardBorder;
+                border-right: $boardBorder;
+            }
+        }
+    }
 }

@@ -1,9 +1,10 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import game from './game';
 
 export const store = configureStore({
   reducer: {
-
+    game: game
   },
 });
 
