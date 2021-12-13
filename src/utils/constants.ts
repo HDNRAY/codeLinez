@@ -1,3 +1,4 @@
+import { ColorOption } from "./type";
 
 export enum Colors {
     RED = 1,
@@ -9,7 +10,7 @@ export enum Colors {
     CYAN = 7
 }
 
-export const AllColors = [{
+export const AllColors: Array<ColorOption> = [{
     label: '红色',
     value: Colors.RED,
     color: 'red'

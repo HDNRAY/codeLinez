@@ -1,15 +1,52 @@
 .game-wrapper {
+    height: 100vh;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 
     $boardBorder: 1px solid black;
 
+    .left-panel {
+        flex: 1;
+        width: 0;
+
+        .next-codes-wrapper {
+            border-left: $boardBorder;
+            border-top: $boardBorder;
+            display: flex;
+            flex-direction: column;
+            height: 54vh;
+            width: 18vh;
+
+            .next-code-wrapper {
+                height: 18vh;
+                width: 18vh;
+                border-bottom: $boardBorder;
+                border-right: $boardBorder;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                .code {
+                    border-radius: 50%;
+                    width: 80%;
+                    height: 80%;
+                }
+            }
+        }
+    }
+
+    .right-panel {
+        flex: 1;
+        width: 0;
+    }
+
     .board {
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        // justify-content: center;
+        // align-items: center;
         border-left: $boardBorder;
         border-top: $boardBorder;
         height: 90vmin;
@@ -17,12 +54,29 @@
 
         .row {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 0;
+            flex-grow: 1;
+            // justify-content: center;
+            // align-items: center;
 
             .cell {
+                width: 0;
+                flex-grow: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 border-bottom: $boardBorder;
                 border-right: $boardBorder;
+
+                &.selected {
+                    background-color: blueviolet;
+                }
+
+                .code {
+                    border-radius: 50%;
+                    width: 85%;
+                    height: 85%;
+                }
             }
         }
     }
