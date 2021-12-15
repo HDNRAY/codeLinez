@@ -2,6 +2,7 @@
   "name": "code-linez",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@reduxjs/toolkit": "^1.7.0",
     "@testing-library/jest-dom": "^4.2.4",
