@@ -33,7 +33,7 @@ export const AllColors: Array<ColorOption> = [{
 }, {
     label: '棕色',
     value: Colors.BROWN,
-    color: 'brown'
+    color: 'chocolate'
 }, {
     label: '青色',
     value: Colors.CYAN,

@@ -1,10 +1,11 @@
 
-import { useCallback, useEffect, useMemo } from 'react';
-import { createGame, userMove, userSelect } from '../../redux/game';
+import { useCallback, useEffect, useMemo, MouseEvent, useState } from 'react';
+import { Keyframes } from '../../components/keyframes/Keyframes';
+import { setPreparedCodes, createGame, updateCell, updateGameState, updateSelectedCell, initializeCodes, generateNextCodes, mergeCodes, checkGame } from '../../redux/game';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { AllColors, ColorMap, Colors } from '../../utils/constants';
-import { Position } from '../../utils/type';
-import { comparePositions } from '../../utils/utils';
+import { Cell, Position } from '../../utils/type';
+import { checkLines, comparePositions, findPath } from '../../utils/utils';
 import './Game.scss';
 
 const Game = (props: {
@@ -21,11 +22,47 @@ const Game = (props: {
     const selectedNextCodes = useAppSelector(state => state.game.nextCodes);
     const selectedCell = useAppSelector(state => state.game.selectedCell);
 
+    const [frames, setFrames] = useState<{
+        [key: string]: React.CSSProperties | string
+    }>();
+
+    // 状态
     useEffect(() => {
-        dispatch(createGame({
-            rows, columns, initialCodes: 4, colors
-        }));
-    }, [colors, columns, dispatch, rows]);
+        switch (selectedGameState) {
+            case 'initialing':
+                dispatch(createGame({
+                    rows, columns, initialCodes: 76, colors
+                }));
+                // 生成初始棋子
+                dispatch(initializeCodes());
+                // 生成预备棋子
+                dispatch(generateNextCodes());
+                dispatch(updateGameState('user-action'));
+                break;
+            case 'user-action':
+                break;
+            case 'board-action':
+                // 实装预备棋子
+                dispatch(setPreparedCodes());
+                // 生成预备棋子
+                dispatch(generateNextCodes());
+                break;
+            default:
+                break;
+        }
+    }, [colors, columns, dispatch, rows, selectedBoard, selectedGameState])
+
+    useEffect(() => {
+        // 检查消除
+        const lines = checkLines(selectedBoard!, 4);
+        if (lines.length) {
+            // 执行消除
+            dispatch(mergeCodes(lines));
+        }
+
+        // 检查游戏是否结束
+        dispatch(checkGame());
+    }, [dispatch, selectedBoard])
 
     const nextCodes = useMemo(() => {
         return <div className='next-codes-wrapper'>
@@ -38,9 +75,58 @@ const Game = (props: {
         </div>
     }, [selectedNextCodes]);
 
-    const onCellClick = useCallback((position: Position) => {
-        dispatch(selectedCell ? userMove(position) : userSelect(position))
-    }, [dispatch, selectedCell]);
+    const codeMoveAnimation = useCallback((path: Array<Position>, color: Colors) => {
+        setFrames({});
+    }, []);
+
+    const userMove = useCallback((position: Position) => {
+        // 检查是否可移动
+        const path = findPath({
+            ...selectedCell!
+        }, position, (p: Position) => {
+            const { x, y } = p;
+            return y > columns - 1 || x > rows - 1 || selectedBoard![y][x].state === 'set';
+        });
+        if (path) {
+            const color = selectedBoard![path[0].y][path[0].x].color;
+            dispatch(updateGameState('user-action-moving'));
+            // 如果可以，则移动
+            codeMoveAnimation([], color);
+            dispatch(updateCell({
+                position: path[path.length - 1],
+                state: 'set',
+                color: color
+            }));
+            dispatch(updateCell({
+                position: path[0],
+                state: 'empty',
+            }));
+            dispatch(updateGameState('board-action'))
+        }
+        // 消除选中
+        dispatch(updateSelectedCell(undefined));
+    }, [codeMoveAnimation, columns, dispatch, rows, selectedBoard, selectedCell]);
+
+    const onCellClick = useCallback((cell: Cell) => {
+        const { position, state } = cell;
+        if ((!selectedCell && state === 'set') || !!selectedCell) {
+            if (selectedCell) {
+                userMove(position);
+            } else {
+                dispatch(updateSelectedCell(position));
+            }
+        }
+    }, [dispatch, selectedCell, userMove]);
+
+    const onMaskClick = useCallback((event: MouseEvent<HTMLDivElement>) => {
+        if (selectedGameState !== 'user-action') {
+            event.stopPropagation();
+        }
+    }, [selectedGameState]);
+
+    const restartGame = useCallback(() => {
+        dispatch(updateGameState('initialing'))
+    }, [dispatch]);
 
     const board = useMemo(() => {
         return <div className='board' >
@@ -49,9 +135,9 @@ const Game = (props: {
                     {row.map((cell) => {
                         const { position, state, color } = cell;
                         const { x, y } = position;
-                        return <div key={`cell${x}${y}`} className={`cell ${comparePositions(position, selectedCell) ? 'selected' : ''}`} onClick={() => onCellClick(position)}>
-                            {state === 'set'
-                                ? <div className='code' style={{ backgroundColor: color ? ColorMap[color] : 'transparent' }}></div>
+                        return <div key={`cell${x}${y}`} className={`cell ${comparePositions(position, selectedCell) ? 'selected' : ''}`} onClick={() => onCellClick(cell)}>
+                            {state !== 'empty'
+                                ? <div className={`code ${state}`} style={{ backgroundColor: color ? ColorMap[color] : 'transparent' }}></div>
                                 : null}
                         </div>
                     })}
@@ -61,13 +147,21 @@ const Game = (props: {
     }, [onCellClick, selectedBoard, selectedCell])
 
     return <div className="game-wrapper">
+        <div className='user-interaction-mask' onClick={onMaskClick}></div>
+        {selectedGameState === 'over' ? <div className='game-result'>
+            <div>GAME OVER</div>
+            <div>
+                <button onClick={restartGame}>再来一局</button>
+            </div>
+        </div> : null}
         <div className='left-panel'>
             {nextCodes}
         </div>
         {board}
         <div className='right-panel'>
-            {selectedGameState}
+            {/* {selectedGameState} */}
         </div>
+        {frames ? <Keyframes name="code-moving-animation" {...frames}></Keyframes> : null}
     </div>
 }
 
