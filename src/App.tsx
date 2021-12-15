@@ -1,10 +1,10 @@
 import './App.css';
 import Game from './features/game/Game';
 
-const App=()=>  {
-  return  (
+const App = () => {
+  return (
     <div className="App">
-        <Game />
+      <Game />
     </div>
   );
 }

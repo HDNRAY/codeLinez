@@ -8,6 +8,8 @@ import { Cell, Position } from '../../utils/type';
 import { checkLines, comparePositions, findPath } from '../../utils/utils';
 import './Game.scss';
 
+const getOrientation = () => window?.screen?.orientation?.angle || window.orientation;
+
 const Game = (props: {
     rows?: number,
     columns?: number,
@@ -22,16 +24,26 @@ const Game = (props: {
     const selectedNextCodes = useAppSelector(state => state.game.nextCodes);
     const selectedCell = useAppSelector(state => state.game.selectedCell);
 
+    const [deviceOrientation, setDeviceOrientation] = useState(getOrientation() === 0 ? 'portrait' : 'landscape');
     const [frames, setFrames] = useState<{
         [key: string]: React.CSSProperties | string
     }>();
+
+    useEffect(() => {
+        const orientationListener = () => {
+            setDeviceOrientation(getOrientation() === 0 ? 'portrait' : 'landscape');
+        }
+        window.addEventListener('orientationchange', orientationListener)
+
+        return () => window.removeEventListener('orientationchange', orientationListener)
+    }, []);
 
     // 状态
     useEffect(() => {
         switch (selectedGameState) {
             case 'initialing':
                 dispatch(createGame({
-                    rows, columns, initialCodes: 76, colors
+                    rows, columns, initialCodes: 4, colors
                 }));
                 // 生成初始棋子
                 dispatch(initializeCodes());
@@ -146,7 +158,7 @@ const Game = (props: {
         </div>
     }, [onCellClick, selectedBoard, selectedCell])
 
-    return <div className="game-wrapper">
+    return <div className={`game-wrapper ${deviceOrientation}`}>
         <div className='user-interaction-mask' onClick={onMaskClick}></div>
         {selectedGameState === 'over' ? <div className='game-result'>
             <div>GAME OVER</div>
