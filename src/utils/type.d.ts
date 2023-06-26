@@ -1,28 +1,27 @@
-
 export interface CommonOption {
-    label: string,
-    value: string,
+    label: string
+    value: string
     info?: any
 }
 
 export interface ColorOption {
-    label: string,
-    value: Colors,
+    label: string
+    value: Colors
     color: string
 }
 
 export interface Cell {
-    state: 'empty' | 'set' | 'prepared',
-    color?: Colors,
+    state: 'empty' | 'set' | 'prepared'
+    color?: Colors
     position: Position
 }
 
 export interface Code {
-    color?: Colors,
+    color?: Colors
     position?: Position
 }
 
 export interface Position {
-    x: number,
+    x: number
     y: number
 }
