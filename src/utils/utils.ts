@@ -1,5 +1,4 @@
-import { Colors } from './constants'
-import { Cell, ColorOption, Position } from './type'
+import type { Position, Cell, ColorOption, Color } from './type.d'
 
 const positionUp = (p: Position) => ({
     x: p.x,
@@ -46,7 +45,7 @@ const generatePositions = (board: Array<Array<Cell>>, count: number) => {
 }
 
 const generateColors = (allColors: Array<ColorOption>, count: number) => {
-    const colors: Array<Colors> = randomsInRange(0, allColors.length - 1, count, true).map((i) => allColors[i].value)
+    const colors: Array<Color> = randomsInRange(0, allColors.length - 1, count, true).map((i) => allColors[i].value)
     return colors
 }
 

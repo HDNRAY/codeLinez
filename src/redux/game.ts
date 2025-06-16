@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { WritableDraft } from '@reduxjs/toolkit/node_modules/immer/dist/internal'
-import { current } from 'immer'
-import { Cell, Code, Position, ColorOption } from '../utils/type'
+import { current, type WritableDraft } from 'immer'
 import { generateColors, generatePositions } from '../utils/utils'
+import type { Cell, Code, ColorOption, Position } from '../utils/type'
 
 interface GameState {
     board: Array<Array<Cell>>

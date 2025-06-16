@@ -4,20 +4,21 @@ export interface CommonOption {
     info?: any
 }
 
+export type Color = 'red' | 'yellow' | 'blue' | 'green' | 'pink' | 'brown' | 'cyan'
+
 export interface ColorOption {
     label: string
-    value: Colors
-    color: string
+    value: Color
 }
 
 export interface Cell {
     state: 'empty' | 'set' | 'prepared'
-    color?: Colors
+    color?: Color
     position: Position
 }
 
 export interface Code {
-    color?: Colors
+    color?: Color
     position?: Position
 }
 

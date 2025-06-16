@@ -13,14 +13,14 @@ import {
     finishMovingCode,
 } from '../../redux/game'
 import { useAppDispatch, useAppSelector } from '../../redux/store'
-import { AllColors, ColorMap, Colors } from '../../utils/constants'
-import { Cell, Position } from '../../utils/type'
+import { AllColors } from '../../utils/constants'
+import type { Cell, Color, Position } from '../../utils/type'
 import { buildMovingPath, checkLines, comparePositions, findPath, waitForAnimation } from '../../utils/utils'
 import './Game.scss'
 
 const getOrientation = () => window?.screen?.orientation?.angle || window.orientation
 
-const Game = (props: { rows?: number; columns?: number; colors?: Array<Colors> }) => {
+const Game = (props: { rows?: number; columns?: number; colors?: Array<Color> }) => {
     const dispatch = useAppDispatch()
 
     const { rows = 9, columns = 9, colors = AllColors } = props
@@ -33,7 +33,7 @@ const Game = (props: { rows?: number; columns?: number; colors?: Array<Colors> }
     const [deviceOrientation, setDeviceOrientation] = useState(getOrientation() === 0 ? 'portrait' : 'landscape')
 
     // moving animation
-    const [movingColor, setMovingColor] = useState<string>('')
+    const [movingColor, setMovingColor] = useState<string | undefined>()
     const [animationFrames, setAnimationFrames] = useState<
         | {
               [key: string]: string
@@ -105,7 +105,7 @@ const Game = (props: { rows?: number; columns?: number; colors?: Array<Colors> }
                             <div
                                 className="code"
                                 style={{
-                                    backgroundColor: color ? ColorMap[color] : 'transparent',
+                                    backgroundColor: color || 'transparent',
                                 }}
                             ></div>
                         </div>
@@ -115,8 +115,8 @@ const Game = (props: { rows?: number; columns?: number; colors?: Array<Colors> }
         )
     }, [selectedNextCodes])
 
-    const codeMoveAnimation = useCallback(async (path: Array<Position>, color: Colors) => {
-        setMovingColor(ColorMap[color])
+    const codeMoveAnimation = useCallback(async (path: Array<Position>, color?: Color) => {
+        setMovingColor(color)
         const framePoints = buildMovingPath(path)
         setAnimationFrames(framePoints)
         await waitForAnimation(1000)
@@ -200,7 +200,7 @@ const Game = (props: { rows?: number; columns?: number; colors?: Array<Colors> }
                                             <div
                                                 className={`code ${state}`}
                                                 style={{
-                                                    backgroundColor: color ? ColorMap[color] : 'transparent',
+                                                    backgroundColor: color || 'transparent',
                                                 }}
                                             ></div>
                                         ) : null}
