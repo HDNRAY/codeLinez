@@ -32,6 +32,8 @@ jobs:
               # You may pin to the exact commit or the version.
               # uses: cpina/github-action-push-to-another-repository@07c4d7b3def0a8ebe788a8f2c843a4e1de4f6900
               uses: cpina/github-action-push-to-another-repository@v1.7.2
+              env:
+                  SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
               with:
                   # Source before directory from the origin directory
                   # source-before-directory: # optional
