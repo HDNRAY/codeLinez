@@ -15,7 +15,7 @@ jobs:
 
         strategy:
             matrix:
-                node-version: [18.x, 20.x, 22.x]
+                node-version: [20.x]
                 # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
         steps:
@@ -36,7 +36,7 @@ jobs:
                   # Source before directory from the origin directory
                   # source-before-directory: # optional
                   # Source directory from the origin directory
-                  # source-directory:
+                  source-directory: codelinez
                   # Name of the destination username/organization
                   destination-github-username: HDNRAY
                   # Destination repository
